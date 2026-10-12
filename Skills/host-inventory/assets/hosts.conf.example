@@ -1,0 +1,15 @@
+# Host inventory. One host per line, with optional lifecycle and tag data at the end:
+# name|address|user|port|jump|os|role|env|owner|protected|notes|state|tags
+#
+# user  = SSH account for that host (least privilege, not root; key auth only).
+# jump  = empty for a direct connection, the NAME of another host below (the bastion),
+#         or a literal user@host[:port].
+# state = active, maintenance, failed, pending, decommissioned
+# tags  = comma-separated labels such as critical, db, home-lab, k3s
+#
+# Never put passwords, tokens or key contents here. SSH keys belong in ~/.ssh or an ssh-agent.
+# The lines below are EXAMPLES - replace them with your own hosts.
+bastion-01|203.0.113.10|jump|22||debian|bastion|prod|infra-team|yes|only public entry point; keys only|active|critical,bastion
+web-01|10.0.1.11|ops|22|bastion-01|debian|web|prod|platform-team|yes|nginx; maintenance window Sun 02:00-04:00|active|critical,nginx
+db-01|10.0.2.11|dbops|22|bastion-01|redhat|db|prod|dba-team|yes|PostgreSQL primary; never reboot without owner approval|active|critical,db
+web-stg-01|10.1.1.11|ops|22||debian|web|staging|platform-team|no|safe canary host for testing changes|active|staging
