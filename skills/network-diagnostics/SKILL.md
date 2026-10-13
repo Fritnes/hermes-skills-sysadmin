@@ -1,19 +1,21 @@
 ---
 name: network-diagnostics
-description: Troubleshoot Linux and network reachability issues such as DNS failure, port connectivity, firewall blocks, routing problems, and service-level latency. Use this skill for "can the host reach X?", "why is port 443 failing?", or "why is the app not responding?".
+description: Troubleshoot Linux and network reachability issues such as DNS failure, port connectivity, firewall blocks, routing problems, and service-level latency. Always resolve managed source and destination hosts through host-inventory first. Use this skill for "can the host reach X?", "why is port 443 failing?", or "why is the app not responding?".
 ---
 
 # Network Diagnostics
 
 Use this skill when the user reports connectivity issues, unreachable services, DNS problems, TLS errors, firewall blocks, routing issues, slow responses, or configuration mismatches.
 
-Start by resolving the target host through the host inventory skill, then test the network path in a narrow sequence: reachability, DNS, route, port, service, and TLS.
+This skill depends on `host-inventory`. Resolve managed hosts there before testing the network path in a narrow sequence: reachability, DNS, route, port, service, and TLS.
 
 ## Quick troubleshooting flow
 
 1. Confirm the host and scope
-   - inventory lookup: `show NAME`
-   - confirm exact source host and destination service
+   - For the source host, use host-inventory `show NAME` and carry forward its exact name, address, SSH user, port, jump host, environment, state, and protection status.
+   - If the destination is also a managed host, resolve it with `show NAME` too. For a group of sources, use host-inventory `names` with the requested filters, then resolve each returned host with `show NAME` before connecting.
+   - Identify each managed host as `NAME (ENV)`. If the inventory is unavailable or a host is missing or ambiguous, stop and ask the user; never guess a host or connection detail.
+   - Confirm the exact source host and destination service. Run source-side checks from the resolved source; do not change routes or firewall rules.
 
 2. Reachability checks
    - `ping -c 3 HOSTNAME_OR_IP`

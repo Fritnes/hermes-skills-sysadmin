@@ -1,66 +1,104 @@
 # Hermes Sysadmin Skills
 
-A lightweight collection of AI agent skills for common sysadmin tasks. The goal is to keep infrastructure actions explicit, safety-first, and easy to review in plain text.
+Hermes Agent skills for host inventory, Linux health checks, and network diagnostics. The workflows prioritize explicit targets, read-only checks, and confirmation before risky changes.
 
-## Included skills
-
-- `host-inventory` — maintain a single source of truth for managed hosts, SSH access, roles, owner metadata, lifecycle state, and tags.
-- `linux-healthcheck` — basic Linux system checks for CPU, memory, disk, load, service health, and uptime.
-- `network-diagnostics` — basic network and reachability troubleshooting for DNS, ports, routes, firewalls, and TLS.
-
-## Repository layout
+## Repository structure
 
 ```text
-Skills/
-  host-inventory/
-    SKILL.md
-    scripts/
-      hostctl.sh
-    assets/
-      hosts.conf.example
-  linux-healthcheck/
-    SKILL.md
-  network-diagnostics/
-    SKILL.md
-README.md
+skills/
+├── host-inventory/
+│   ├── SKILL.md
+│   ├── assets/
+│   │   └── hosts.conf.example
+│   └── scripts/
+│       └── hostctl.sh
+├── linux-healthcheck/
+│   └── SKILL.md
+├── network-diagnostics/
+│   └── SKILL.md
+├── incident-triage/
+│   └── SKILL.md
+├── service-operations/
+│   └── SKILL.md
+├── backup-restore-checks/
+│   └── SKILL.md
+├── patch-management/
+│   └── SKILL.md
+├── storage-diagnostics/
+│   └── SKILL.md
+└── security-audit/
+    └── SKILL.md
 ```
 
-## Quick start
+Each folder in `skills/` contains a `SKILL.md` with the skill instructions. The host inventory skill also includes an example inventory and a Bash management script.
 
-1. Review the inventory format in `Skills/host-inventory/SKILL.md`.
-2. Copy the example inventory and adjust it for your environment:
-   ```bash
-   cp Skills/host-inventory/assets/hosts.conf.example ./hosts.conf
-   ```
-3. List your hosts:
-   ```bash
-   HOSTCTL_INVENTORY=./hosts.conf bash Skills/host-inventory/scripts/hostctl.sh list
-   ```
-4. Add a host with lifecycle state and tags:
-   ```bash
-   HOSTCTL_INVENTORY=./hosts.conf bash Skills/host-inventory/scripts/hostctl.sh add web-02 10.0.1.12 ops debian web prod platform-team --state active --tags critical,nginx
-   ```
+## Available skills
+
+| Skill | Purpose | Example request |
+|---|---|---|
+| `host-inventory` | Find, validate, and manage hosts, roles, environments, lifecycle states, and tags. | "List the production web hosts" |
+| `linux-healthcheck` | Gather read-only CPU, memory, disk, service, and uptime signals. | "Check whether web-01 is healthy" |
+| `network-diagnostics` | Troubleshoot DNS, routes, ports, firewalls, reachability, and TLS. | "Why can't web-01 reach db-01 on port 5432?" |
+| `incident-triage` | Correlate inventory, health, service, and network evidence without changing systems. | "Triage why web-01 is responding slowly" |
+| `service-operations` | Inspect systemd units and guide approved service state changes. | "Check nginx on web-01 and explain a safe reload" |
+| `backup-restore-checks` | Review backup coverage and freshness, then plan a safe restore test. | "Check whether db-01 has a recent restorable backup" |
+| `patch-management` | Assess pending updates and prepare a staged, reversible maintenance plan. | "Review pending security updates for web-01" |
+| `storage-diagnostics` | Inspect filesystem, inode, mount, SMART, and LVM capacity signals. | "Find what is filling /var on web-01" |
+| `security-audit` | Run read-only SSH, exposure, update, permissions, and firewall checks. | "Audit SSH and listening ports on web-01" |
+
+## Install
+
+Copy all skills into your Hermes skill directory:
+
+```bash
+mkdir -p ~/.hermes/skills
+cp -r skills/* ~/.hermes/skills/
+```
+
+To install only selected skills, name their folders explicitly:
+
+```bash
+cp -r skills/host-inventory skills/linux-healthcheck ~/.hermes/skills/
+```
+
+## Using a skill
+
+Ask Hermes normally and it may select a relevant skill automatically. To request one explicitly, start your message with its slash command:
+
+```text
+/host-inventory list production web hosts
+/linux-healthcheck check web-01
+/network-diagnostics troubleshoot web-01 reaching db-01 on port 5432
+/incident-triage triage why web-01 is responding slowly
+/service-operations inspect nginx on web-01
+/backup-restore-checks check db-01 backup freshness and plan a restore test
+/patch-management review pending updates for web-01
+/storage-diagnostics inspect disk and inode usage on web-01
+/security-audit review SSH and exposed ports on web-01
+```
+
+## Host inventory setup
+
+Create a local inventory from the example, then replace its sample entries with your own:
+
+```bash
+cp skills/host-inventory/assets/hosts.conf.example ./hosts.conf
+HOSTCTL_INVENTORY=./hosts.conf bash skills/host-inventory/scripts/hostctl.sh validate
+HOSTCTL_INVENTORY=./hosts.conf bash skills/host-inventory/scripts/hostctl.sh list
+```
+
+The inventory is the source of truth for managed hosts. Set `HOSTCTL_INVENTORY` to use a different path; otherwise the script uses `./hosts.conf`. The example entries are documentation only and must be replaced before use.
 
 ## Safety principles
 
-- always resolve the target host via the inventory first
-- show the target list before performing a risky action
-- prefer read-only checks before making configuration changes
-- keep credentials and secrets out of the inventory file
+- Resolve the host and environment through the inventory before any remote action.
+- Show the resolved target list before acting on a group of hosts.
+- Prefer read-only checks; get approval before risky changes, such as modifying routes or firewall rules.
+- Keep passwords, tokens, and private keys out of inventory files.
 
-## GitHub
+## Adding a skill
 
-This repo is designed to be easy to push to GitHub as a public or private skills repository. A typical flow is:
-
-```bash
-git init
-git add .
-git commit -m "Initial sysadmin skills repo"
-git branch -M main
-git remote add origin git@github.com:<you>/<repo>.git
-git push -u origin main
-```
-
-## Notes
-
-This repository is intentionally small and opinionated: the inventory is the entry point, and each operational skill assumes the agent has already resolved the correct host and environment before touching a system.
+1. Create a folder under `skills/` using the skill name.
+2. Add a `SKILL.md` with `name` and `description` frontmatter.
+3. Add supporting scripts or assets in that folder as needed.
+4. Add the skill to the table in this README.

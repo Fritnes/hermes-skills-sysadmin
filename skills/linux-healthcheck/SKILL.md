@@ -1,17 +1,19 @@
 ---
 name: linux-healthcheck
-description: Basic Linux host health checks for disk, memory, CPU, load, services, process pressure, and uptime. Use this skill before patching, troubleshooting a degraded server, or deciding whether a machine is safe to act on. Start with inventory resolution, then gather quick readiness signals from the machine itself.
+description: Basic Linux host health checks for disk, memory, CPU, load, services, process pressure, and uptime. Use this skill before patching, troubleshooting a degraded server, or deciding whether a machine is safe to act on. Always resolve the target through host-inventory first, then gather read-only readiness signals.
 ---
 
 # Linux Health Check
 
 Use this skill when the user asks for a quick health pass on a Linux machine or wants to know whether a server is overloaded, low on disk, or unhealthy before performing change operations.
 
-This skill should be used after resolving the target host via the host inventory skill. It is intentionally read-only and fact-based: gather the signals first, then explain what they mean.
+This skill depends on `host-inventory` and is intentionally read-only and fact-based: resolve the target there first, gather the signals, then explain what they mean.
 
 ## Required operating assumptions
 
-- Check that the target is in the inventory first.
+- For a single host, use host-inventory `show NAME`; for a group, use its `names` filters and resolve each returned host with `show NAME` before connecting.
+- Carry forward the exact inventory name, address, SSH user, port, jump host, environment, state, and protection status. Report each target as `NAME (ENV)`.
+- If the inventory is unavailable or the target is missing or ambiguous, stop and ask the user to resolve it. Never guess a host or connection detail.
 - Prefer a single short command sequence over long interactive diagnostics.
 - Use `sudo` only when the user explicitly allows privilege escalation or when the command requires it.
 - Do not guess; report the exact command and the exact meaning of the output.

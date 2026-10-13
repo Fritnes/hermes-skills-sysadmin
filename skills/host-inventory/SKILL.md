@@ -76,6 +76,15 @@ Every `add` and `remove` writes a backup (`hosts.conf.bak`) and appends a line t
 
 **Remove a host.** Name the host, its environment and its owner, get explicit confirmation, then run `remove NAME --yes`. Never pass `--yes` before the user has confirmed; the flag exists so a removal cannot happen by accident.
 
+## Handoff to operational skills
+
+Every operational skill in this repository that inspects or acts on hosts must resolve targets through this inventory before running host commands.
+
+- For a single host, use `show NAME` and carry forward its exact name, address, SSH user, port, jump host, environment, state, and protection status. Identify it as `NAME (ENV)` in summaries.
+- For a group, use `names` with the requested environment, role, state, and/or tag filters. Show the exact resulting target list before any change; use `show NAME` for each target before connecting.
+- If the inventory is unavailable, a host is missing, or a name matches more than one possible target, stop and ask the user to resolve it. Never fall back to a guessed hostname, address, or SSH account.
+- Every operational skill must respect the inventory's `state` and `protected` fields. Resolving a host authorizes identification only; it does not authorize a change.
+
 ## Safety rules
 
 - **No secrets in the inventory.** SSH keys belong in `~/.ssh` or an ssh-agent. If the user pastes a password or private key, do not write it to the file; tell them where it should go instead.
