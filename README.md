@@ -1,6 +1,6 @@
 # Hermes Sysadmin Skills
 
-Hermes Agent skills for host inventory, Linux health checks, and network diagnostics. The workflows prioritize explicit targets, read-only checks, and confirmation before risky changes.
+Hermes Agent skills for host inventory, Linux health checks, network diagnostics, and security operations. The workflows prioritize explicit targets, read-only checks, and confirmation before risky changes.
 
 ## Repository structure
 
@@ -26,7 +26,9 @@ skills/
 │   └── SKILL.md
 ├── storage-diagnostics/
 │   └── SKILL.md
-└── security-audit/
+├── security-audit/
+│   └── SKILL.md
+└── fail2ban-audit/
     └── SKILL.md
 ```
 
@@ -45,6 +47,7 @@ Each folder in `skills/` contains a `SKILL.md` with the skill instructions. The 
 | `patch-management` | Assess pending updates and prepare a staged, reversible maintenance plan. | "Review pending security updates for web-01" |
 | `storage-diagnostics` | Inspect filesystem, inode, mount, SMART, and LVM capacity signals. | "Find what is filling /var on web-01" |
 | `security-audit` | Run read-only SSH, exposure, update, permissions, and firewall checks. | "Audit SSH and listening ports on web-01" |
+| `fail2ban-audit` | Audit Fail2Ban service, jails, bans, and firewall enforcement without changing the host. | "Check whether Fail2Ban is banning correctly on web-01" |
 
 ## Install
 
@@ -75,6 +78,7 @@ Ask Hermes normally and it may select a relevant skill automatically. To request
 /patch-management review pending updates for web-01
 /storage-diagnostics inspect disk and inode usage on web-01
 /security-audit review SSH and exposed ports on web-01
+/fail2ban-audit audit Fail2Ban on web-01
 ```
 
 ## Host inventory setup
