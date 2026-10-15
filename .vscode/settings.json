@@ -1,0 +1,8 @@
+{
+    "chat.tools.terminal.autoApprove": {
+        "/^git diff --check && bash -n skills/host-inspect/scripts/inspect\\.sh && bash -n skills/host-inspect/scripts/run\\.sh && ! grep -nE '\\[\\[:blank:\\]\\]\\+\\$' README\\.md skills/host-inspect/SKILL\\.md skills/host-inspect/scripts/inspect\\.sh skills/host-inspect/scripts/run\\.sh && git status --short$/": {
+            "approve": true,
+            "matchCommandLine": true
+        }
+    }
+}

@@ -12,6 +12,14 @@ skills/
 │   │   └── hosts.conf.example
 │   └── scripts/
 │       └── hostctl.sh
+├── host-inspect/
+│   ├── SKILL.md
+│   ├── references/
+│   │   ├── containers.md
+│   │   └── mdraid.md
+│   └── scripts/
+│       ├── inspect.sh
+│       └── run.sh
 ├── linux-healthcheck/
 │   └── SKILL.md
 ├── network-diagnostics/
@@ -39,6 +47,7 @@ Each folder in `skills/` contains a `SKILL.md` with the skill instructions. The 
 | Skill | Purpose | Example request |
 |---|---|---|
 | `host-inventory` | Find, validate, and manage hosts, roles, environments, lifecycle states, and tags. | "List the production web hosts" |
+| `host-inspect` | Read-only inspection of host health, services, logs, network, security, containers, and RAID, using inventory-resolved targets. | "Inspect web-01 and report any issues" |
 | `linux-healthcheck` | Gather read-only CPU, memory, disk, service, and uptime signals. | "Check whether web-01 is healthy" |
 | `network-diagnostics` | Troubleshoot DNS, routes, ports, firewalls, reachability, and TLS. | "Why can't web-01 reach db-01 on port 5432?" |
 | `incident-triage` | Correlate inventory, health, service, and network evidence without changing systems. | "Triage why web-01 is responding slowly" |
@@ -61,7 +70,7 @@ cp -r skills/* ~/.hermes/skills/
 To install only selected skills, name their folders explicitly:
 
 ```bash
-cp -r skills/host-inventory skills/linux-healthcheck ~/.hermes/skills/
+cp -r skills/host-inventory skills/host-inspect skills/linux-healthcheck ~/.hermes/skills/
 ```
 
 ## Using a skill
@@ -70,6 +79,7 @@ Ask Hermes normally and it may select a relevant skill automatically. To request
 
 ```text
 /host-inventory list production web hosts
+/host-inspect inspect web-01 and report any issues
 /linux-healthcheck check web-01
 /network-diagnostics troubleshoot web-01 reaching db-01 on port 5432
 /incident-triage triage why web-01 is responding slowly
